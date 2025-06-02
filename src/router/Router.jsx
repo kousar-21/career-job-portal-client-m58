@@ -6,6 +6,7 @@ import RootLayout from '../Layouts/RootLayout';
 import Home from '../pages/Home/Home';
 import Register from '../pages/Register/Register';
 import SignIn from '../pages/SignIn/SignIn';
+import JobsDetails from '../pages/JobsDetails/JobsDetails';
 
 
 export const router = createBrowserRouter([
@@ -24,6 +25,10 @@ export const router = createBrowserRouter([
         {
             path: '/signIn',
             element: <SignIn></SignIn>
+        },
+        {
+          path: '/jobs/:id',
+          element: <JobsDetails></JobsDetails>
         }
     ]
   },
