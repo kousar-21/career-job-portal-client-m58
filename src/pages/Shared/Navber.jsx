@@ -18,6 +18,11 @@ const Navber = () => {
 
     const links = <>
         <li><NavLink to='/'>Home</NavLink></li>
+        {
+            user && <>
+            <li><NavLink to='/myApplication'>My Application</NavLink></li>
+            </>
+        }
     </>
 
     return (
