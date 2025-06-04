@@ -18,9 +18,17 @@ const Navber = () => {
 
     const links = <>
         <li><NavLink to='/'>Home</NavLink></li>
+        {/* for applicant links. check roles as well */}
         {
             user && <>
             <li><NavLink to='/myApplication'>My Application</NavLink></li>
+            </>
+        }
+
+        {/* for recruiter. check roles as well */}
+        {
+            user && <>
+            <li><NavLink to='/addJob'>Add Job</NavLink></li>
             </>
         }
     </>
