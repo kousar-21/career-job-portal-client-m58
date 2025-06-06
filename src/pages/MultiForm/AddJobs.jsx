@@ -1,7 +1,11 @@
-import React from 'react';
+import React, { use } from 'react';
+import { AuthContext } from '../../contexts/AuthContext';
+import axios from 'axios';
+import Swal from 'sweetalert2';
 
 const AddJobs = () => {
 
+    const { user } = use(AuthContext)
 
     const handleAddJob = (e) => {
         e.preventDefault()
@@ -10,7 +14,57 @@ const AddJobs = () => {
         const formData = new FormData(form)
 
         const data = Object.fromEntries(formData.entries())
-        console.log(data)
+        // console.log(data)
+
+        //if data is like these "requirements (separate by comma)". Then  destructure requirement from "requirements (separate by comma)" in data like that.
+        // const rawRequirements = data["requirements (separate by comma)"]
+
+        //process salary range data
+        const { min, max, currency, ...newJob } = data;
+        newJob.salaryRange = { 
+            min: Number(min),
+            max: Number(max),
+            currency }
+
+        //if data is like these "requirements (separate by comma)". Then  destructure requirement from "requirements (separate by comma)" in data like that. And set it in newJob
+        // newJob.requirements = rawRequirements;
+
+        //process requirements
+        const requirementsString = newJob.requirements;
+        const requirementsDirty = requirementsString.split(",");
+        const requirementsClean = requirementsDirty.map(req => req.trim())
+        newJob.requirements = requirementsClean;
+
+
+        //process Responsibilities
+        newJob.responsibilities = newJob.responsibilities.split(",").map(res => res.trim())
+
+        newJob.status = "active";
+
+
+        // console.log(requirementsClean)
+        // console.log(Object.keys(newJob).length)
+
+
+        // console.log(newJob)
+
+        //send data to mongodb via back end with the help of Axios instead of fetch
+        axios.post("http://localhost:4000/jobs", newJob)
+            .then(res => {
+                console.log(res)
+                if (res.data.insertedId) {
+                    Swal.fire({
+                        position: "top",
+                        icon: "success",
+                        title: "Your Job Data has been updated",
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            })
+            .catch(error => {
+                console.log(error.message)
+            })
     }
 
     return (
@@ -37,10 +91,10 @@ const AddJobs = () => {
                 <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
                     <legend className="fieldset-legend">Job Type</legend>
                     <div className="filter">
-                        <input className="btn filter-reset" type="radio" name="metaframeworks" aria-label="All" />
-                        <input className="btn" type="radio" name="jobType" aria-label="On-Site" />
-                        <input className="btn" type="radio" name="jobType" aria-label="Remote" />
-                        <input className="btn" type="radio" name="jobType" aria-label="Hybrid" />
+                        <input className="btn filter-reset" type="radio" name="jobType" aria-label="All" />
+                        <input className="btn" type="radio" name="jobType" value="On-Site" aria-label="On-Site" />
+                        <input className="btn" type="radio" name="jobType" value="Remote" aria-label="Remote" />
+                        <input className="btn" type="radio" name="jobType" value="Hybrid" aria-label="Hybrid" />
                     </div>
 
 
@@ -62,7 +116,7 @@ const AddJobs = () => {
                 {/* Application Dead line */}
                 <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
                     <legend className="fieldset-legend">Application Dead line</legend>
-                    <input type="date" className="input" />
+                    <input type="date" name='deadline' className="input" />
 
                 </fieldset>
 
@@ -73,12 +127,12 @@ const AddJobs = () => {
                     <div className='grid grid-cols-1 md:grid-cols-3 gap-5'>
                         <div>
                             <label className="label">Minimum Salary</label>
-                            <input type="text" name='min' className="input" placeholder="Minimum Salary" />
+                            <input type="number" name='min' className="input" placeholder="Minimum Salary" />
                         </div>
 
                         <div>
                             <label className="label">Maximum Salary</label>
-                            <input type="text" name='max' className="input" placeholder="Maximum Salary" />
+                            <input type="number" name='max' className="input" placeholder="Maximum Salary" />
                         </div>
 
                         <div>
@@ -103,14 +157,14 @@ const AddJobs = () => {
                 {/* Job Requirements */}
                 <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
                     <legend className="fieldset-legend"> Requirements</legend>
-                    <textarea className="textarea" name='requirements (separate by comma)' placeholder="Job Requirements"></textarea>
+                    <textarea className="textarea" name='requirements' placeholder="Job Requirements"></textarea>
 
                 </fieldset>
 
                 {/* Job Responsibilities */}
                 <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
                     <legend className="fieldset-legend"> Job Responsibilities</legend>
-                    <textarea className="textarea" name='responsibilities (separate by comma)' placeholder="Job Responsibilities"></textarea>
+                    <textarea className="textarea" name='responsibilities' placeholder="Job Responsibilities"></textarea>
 
                 </fieldset>
 
@@ -122,9 +176,9 @@ const AddJobs = () => {
                     <input type="text" name='hr_name' className="input" placeholder="HR Name" />
 
                     <label className="label">HR Email</label>
-                    <input type="text" name='email' className="input" placeholder="HR Email" />
+                    <input type="text" name='email' className="input" defaultValue={user.email} placeholder="HR Email" />
 
-                    
+
                 </fieldset>
 
                 <input type="submit" className='btn btn-primary' value="Submit" />

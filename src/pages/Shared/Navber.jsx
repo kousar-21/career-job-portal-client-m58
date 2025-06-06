@@ -29,6 +29,7 @@ const Navber = () => {
         {
             user && <>
             <li><NavLink to='/addJob'>Add Job</NavLink></li>
+            <li><NavLink to='/myPostedJobs'>My Posted Jobs</NavLink></li>
             </>
         }
     </>
