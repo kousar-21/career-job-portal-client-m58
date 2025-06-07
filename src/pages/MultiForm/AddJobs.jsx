@@ -176,7 +176,7 @@ const AddJobs = () => {
                     <input type="text" name='hr_name' className="input" placeholder="HR Name" />
 
                     <label className="label">HR Email</label>
-                    <input type="text" name='email' className="input" defaultValue={user.email} placeholder="HR Email" />
+                    <input type="text" name='hr_email' className="input" defaultValue={user.email} placeholder="HR Email" />
 
 
                 </fieldset>
