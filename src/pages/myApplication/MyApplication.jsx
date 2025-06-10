@@ -13,12 +13,14 @@ import { myApplicationsPromise } from '../../Api/ApplicationApi';
 const MyApplication = () => {
 
     const {user} = useAuth()
+    //get firebase admin access token
+    // console.log(user.accessToken)
 
     return (
         <div className=''>
             <ApplicationState></ApplicationState>
             <Suspense fallback={<span className="loading loading-spinner text-secondary"></span>}>
-                <ApplicationList myApplicationsPromise={myApplicationsPromise(user.email)}></ApplicationList>
+                <ApplicationList myApplicationsPromise={myApplicationsPromise(user.email, user.accessToken)}></ApplicationList>
             </Suspense>
         </div>
     );
